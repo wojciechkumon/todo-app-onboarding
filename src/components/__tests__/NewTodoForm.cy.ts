@@ -31,4 +31,9 @@ describe('NewTodoForm', () => {
     cy.get('@addTodoSpy').should('have.been.calledOnceWith', 'Another task');
     cy.get('input').should('have.value', '');
   });
+
+  it('should focus input on mount', () => {
+    cy.mount(NewTodoForm, { attrs: { onAddTodo: () => undefined } });
+    cy.get('input').should('be.focused')
+  })
 });

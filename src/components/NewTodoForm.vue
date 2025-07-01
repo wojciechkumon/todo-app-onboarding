@@ -1,26 +1,32 @@
 <template>
-  <div class="q-pa-md">
-    <q-input v-model="text" label="New todo item" @keyup.enter="submitTodo" color="amber" />
+  <form class="q-pa-md" @submit.prevent="submitTodo">
+    <q-input
+      v-model="text"
+      ref="todoInput"
+      label="New todo item"
+      color="amber"
+    />
     <div class="flex justify-center q-mt-sm">
       <q-btn
         label="Add"
+        type="submit"
         color="amber"
-        @click="submitTodo"
         class="q-mt-sm text-black full-width"
         :disabled="!isValidForm()"
       />
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const emit = defineEmits<{
   (e: 'add-todo', newTodoValue: string): void;
 }>();
 
 const text = ref('');
+const todoInput = ref<HTMLInputElement | null>(null);
 
 function isValidForm(): boolean {
   const trimmedValue = text.value.trim();
@@ -34,4 +40,7 @@ function submitTodo(): void {
   }
   text.value = '';
 }
+
+onMounted(() => todoInput.value?.focus());
+
 </script>
