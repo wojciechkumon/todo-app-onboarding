@@ -1,11 +1,6 @@
 <template>
   <form class="q-pa-md" @submit.prevent="submitTodo">
-    <q-input
-      v-model="text"
-      ref="todoInput"
-      label="New todo item"
-      color="amber"
-    />
+    <q-input v-model="text" ref="todoInput" label="New todo item" color="amber" />
     <div class="flex justify-center q-mt-sm">
       <q-btn
         label="Add"
@@ -42,5 +37,4 @@ function submitTodo(): void {
 }
 
 onMounted(() => todoInput.value?.focus());
-
 </script>
