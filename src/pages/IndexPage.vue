@@ -1,5 +1,8 @@
 <template>
-  <q-page class="row items-center justify-evenly">
+  <q-page>
+    <div class="row items-center justify-evenly">
+      <NewTodoForm @add-todo="addTodo" class="col-12 col-lg-4" />
+    </div>
     <example-component
       title="Example component"
       active
@@ -13,29 +16,18 @@
 import { ref } from 'vue';
 import type { Todo, Meta } from 'components/models';
 import ExampleComponent from 'components/ExampleComponent.vue';
+import NewTodoForm from 'components/NewTodoForm.vue';
 
-const todos = ref<Todo[]>([
-  {
-    id: 1,
-    content: 'ct1',
-  },
-  {
-    id: 2,
-    content: 'ct2',
-  },
-  {
-    id: 3,
-    content: 'ct3',
-  },
-  {
-    id: 4,
-    content: 'ct4',
-  },
-  {
-    id: 5,
-    content: 'ct5',
-  },
-]);
+const todos = ref<Todo[]>([]);
+let todoIdCounter = 0;
+
+function addTodo(newTodo: string): void {
+  todos.value.push({
+    id: todoIdCounter,
+    content: newTodo,
+  });
+  todoIdCounter += 1;
+}
 
 const meta = ref<Meta>({
   totalCount: 1200,

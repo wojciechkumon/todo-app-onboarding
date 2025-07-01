@@ -1,8 +1,6 @@
 {
   "@quasar/testing-e2e-cypress": {
     "port": "4000",
-    "options": [
-      "code-coverage"
-    ]
+    "options": ["code-coverage"]
   }
 }
