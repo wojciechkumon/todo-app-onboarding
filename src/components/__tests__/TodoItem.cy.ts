@@ -11,4 +11,16 @@ describe('TodoItem', () => {
     cy.get('[data-cy=edit-btn]').should('exist');
     cy.get('[data-cy=delete-btn]').should('exist');
   });
+
+  it('emits delete event when delete button is clicked', () => {
+    const onDelete = cy.spy().as('onDeleteSpy');
+
+    cy.mount(TodoItem, {
+      props: { todo },
+      attrs: { onDelete },
+    });
+
+    cy.get('[data-cy=delete-btn]').click();
+    cy.get('@onDeleteSpy').should('have.been.calledOnce');
+  });
 });

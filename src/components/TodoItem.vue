@@ -8,7 +8,7 @@
         <q-btn flat icon="edit" data-cy="edit-btn" />
       </q-item-section>
       <q-item-section side class="no-padding">
-        <q-btn flat icon="delete" data-cy="delete-btn" />
+        <q-btn flat icon="delete" data-cy="delete-btn" @click="emit('delete')" />
       </q-item-section>
     </q-item>
   </div>
@@ -18,6 +18,9 @@
 import type { Todo } from 'components/models';
 
 defineProps<{ todo: Todo }>();
+const emit = defineEmits<{
+  (e: 'delete'): void;
+}>();
 </script>
 
 <style scoped>

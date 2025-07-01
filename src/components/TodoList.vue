@@ -8,6 +8,7 @@
           :key="todo.id"
           :todo="todo"
           class="col-3 q-pa-md"
+          @delete="emit('delete', todo.id)"
           data-cy="todo-item"
         />
       </div>
@@ -20,4 +21,7 @@ import TodoItem from './TodoItem.vue';
 import type { Todo } from 'components/models';
 
 defineProps<{ todos: Todo[] }>();
+const emit = defineEmits<{
+  (e: 'delete', id: number): void;
+}>();
 </script>

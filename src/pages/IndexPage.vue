@@ -3,7 +3,7 @@
     <div class="row items-center justify-evenly">
       <NewTodoForm @add-todo="addTodo" class="col-12 col-lg-4" />
     </div>
-    <TodoList :todos="todos" />
+    <TodoList :todos="todos" @delete="deleteTodo" />
   </q-page>
 </template>
 
@@ -22,5 +22,9 @@ function addTodo(newTodo: string): void {
     content: newTodo,
   });
   todoIdCounter += 1;
+}
+
+function deleteTodo(id: number): void {
+  todos.value = todos.value.filter((todo) => todo.id !== id);
 }
 </script>
