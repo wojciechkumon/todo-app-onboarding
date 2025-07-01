@@ -3,20 +3,15 @@
     <div class="row items-center justify-evenly">
       <NewTodoForm @add-todo="addTodo" class="col-12 col-lg-4" />
     </div>
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+    <TodoList :todos="todos" />
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ExampleComponent.vue';
+import type { Todo } from 'components/models';
 import NewTodoForm from 'components/NewTodoForm.vue';
+import TodoList from 'components/TodoList.vue';
 
 const todos = ref<Todo[]>([]);
 let todoIdCounter = 0;
@@ -28,8 +23,4 @@ function addTodo(newTodo: string): void {
   });
   todoIdCounter += 1;
 }
-
-const meta = ref<Meta>({
-  totalCount: 1200,
-});
 </script>

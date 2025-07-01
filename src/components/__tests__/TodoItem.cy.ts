@@ -1,7 +1,7 @@
 import TodoItem from '../TodoItem.vue';
 import type { Todo } from 'components/models';
 
-describe('TodoItem component', () => {
+describe('TodoItem', () => {
   const todo: Todo = { id: 1, content: 'Test todo item' };
 
   it('renders todo content and buttons', () => {

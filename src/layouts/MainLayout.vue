@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 const dottedStyle = {
-  backgroundImage: 'radial-gradient(#686868 1px, transparent 1px)',
+  backgroundImage: 'radial-gradient(#555555 1px, transparent 1px)',
   backgroundSize: '32px 32px',
 };
 </script>
