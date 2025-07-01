@@ -10,7 +10,7 @@ describe('Todo List App', () => {
   it('should add a todo item', () => {
     const todoText = 'My first todo';
 
-    cy.get('input[aria-label="New todo item"]').type(todoText);
+    cy.get('textarea[aria-label="New todo item"]').type(todoText);
     cy.contains('button', 'Add').click();
 
     cy.contains(todoText).should('be.visible');
@@ -20,7 +20,7 @@ describe('Todo List App', () => {
     const numberOfTodos = 5;
     for (let i = 1; i <= numberOfTodos; i++) {
       const todoText = `Todo item ${i}`;
-      cy.get('input[aria-label="New todo item"]').type(todoText);
+      cy.get('textarea[aria-label="New todo item"]').type(todoText);
       cy.contains('button', 'Add').click();
     }
     for (let i = 1; i <= numberOfTodos; i++) {
@@ -33,7 +33,7 @@ describe('Todo List App', () => {
   it('should add 3 todos and delete the middle one', () => {
     const todos = ['First todo', 'Second todo', 'Third todo'];
     todos.forEach((todo) => {
-      cy.get('input[aria-label="New todo item"]').type(todo);
+      cy.get('textarea[aria-label="New todo item"]').type(todo);
       cy.contains('button', 'Add').click();
     });
     cy.get('[data-cy=todo-item]').should('have.length', 3);
