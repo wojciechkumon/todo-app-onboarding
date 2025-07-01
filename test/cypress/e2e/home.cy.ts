@@ -49,6 +49,52 @@ describe('Todo List App', () => {
     cy.contains('Second todo').should('not.exist');
     cy.contains('Third todo').should('be.visible');
   });
+
+  describe('editing', () => {
+    it('should edit the middle todo item', () => {
+      const todos = ['First todo', 'Second todo', 'Third todo'];
+      todos.forEach((todo) => {
+        cy.get('textarea[aria-label="New todo item"]').type(todo);
+        cy.contains('button', 'Add').click();
+      });
+      cy.get('[data-cy=todo-item]').should('have.length', 3);
+
+      cy.get('[data-cy=todo-item]')
+        .eq(1)
+        .within(() => {
+          cy.get('[data-cy=edit-btn]').click();
+          cy.get('[data-cy=edit-input]').clear().type('todo edited!');
+          cy.get('[data-cy=edit-save-btn]').click();
+        });
+
+      cy.contains('First todo').should('be.visible');
+      cy.contains('Second todo').should('not.exist');
+      cy.contains('todo edited!').should('be.visible');
+      cy.contains('Third todo').should('be.visible');
+    });
+
+    it('should cancel editing the middle todo item', () => {
+      const todos = ['First todo', 'Second todo', 'Third todo'];
+      todos.forEach((todo) => {
+        cy.get('textarea[aria-label="New todo item"]').type(todo);
+        cy.contains('button', 'Add').click();
+      });
+      cy.get('[data-cy=todo-item]').should('have.length', 3);
+
+      cy.get('[data-cy=todo-item]')
+        .eq(1)
+        .within(() => {
+          cy.get('[data-cy=edit-btn]').click();
+          cy.get('[data-cy=edit-input]').clear().type('new todo text that will be cancelled');
+          cy.get('[data-cy=edit-cancel-btn]').click();
+        });
+
+      cy.contains('First todo').should('be.visible');
+      cy.contains('Second todo').should('be.visible');
+      cy.contains('new todo text that will be cancelled').should('not.exist');
+      cy.contains('Third todo').should('be.visible');
+    });
+  });
 });
 
 // Workaround for Cypress AE + TS + Vite

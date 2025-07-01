@@ -9,6 +9,7 @@
           :todo="todo"
           class="col-3 q-pa-md"
           @delete="emit('delete', todo.id)"
+          @edit="(newContent: string) => emit('edit', todo.id, newContent)"
           data-cy="todo-item"
         />
       </div>
@@ -23,5 +24,6 @@ import type { Todo } from 'components/models';
 defineProps<{ todos: Todo[] }>();
 const emit = defineEmits<{
   (e: 'delete', id: number): void;
+  (e: 'edit', id: number, newContent: string): void;
 }>();
 </script>

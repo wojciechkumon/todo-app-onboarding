@@ -52,7 +52,9 @@ export default defineConfig((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        QUASAR_CSS_VARS: true,
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

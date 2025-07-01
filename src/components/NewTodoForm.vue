@@ -1,6 +1,6 @@
 <template>
   <form class="q-pa-md" @submit.prevent="submitTodo">
-    <q-input v-model="text" ref="todoInput" type="textarea" label="New todo item" color="amber" />
+    <q-input v-model="text" ref="todoInput" autogrow label="New todo item" color="amber" />
     <div class="flex justify-center q-mt-sm">
       <q-btn
         label="Add"
