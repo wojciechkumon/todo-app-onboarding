@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="row items-center justify-evenly">
+    <div class="row items-center justify-evenly q-pt-xl">
       <NewTodoForm @add-todo="addTodo" class="col-12 col-lg-4" />
     </div>
     <TodoList :todos="todos" @delete="deleteTodo" @edit="editTodo" />

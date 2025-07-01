@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div v-if="todos.length === 0" class="text-center text-grey-7">
+    <h5>Add your first todo above</h5>
+  </div>
+  <div v-else>
     <h2 class="text-center">Your todos</h2>
     <div class="q-px-md">
       <div class="row items-stretch">
