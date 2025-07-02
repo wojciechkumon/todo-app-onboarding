@@ -1,8 +1,15 @@
 # Todo list (todo-app-onboarding)
 
-A Quasar Project
+It's a simple app to test basic Quasar + Vue capabilities.
 
-## Install the dependencies
+Features: add a todo item, remove it, edit, mark as completed and revert.
+
+![todo-list-app-screenshot.png](docs/todo-list-app-screenshot.png)
+
+
+## A Quasar Project development
+
+### Install the dependencies
 
 ```bash
 yarn
