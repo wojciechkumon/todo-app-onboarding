@@ -11,7 +11,7 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     api: {
-      handler: 'handler.handler',
+      handler: 'src/handler.handler',
       events: [
         {
           httpApi: '*',
