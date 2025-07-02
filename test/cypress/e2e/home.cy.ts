@@ -101,7 +101,7 @@ describe('Todo List App', () => {
       });
 
     cy.contains('completed').should('be.visible');
-    cy.get('.completed-todo').should('be.visible');
+    cy.get('[data-cy=completed-todo-item]').should('be.visible');
 
     // revert completion
     cy.get('[data-cy=completed-todo-item]')
@@ -111,7 +111,7 @@ describe('Todo List App', () => {
       });
 
     cy.contains('completed').should('not.exist');
-    cy.get('.completed-todo').should('not.exist');
+    cy.get('[data-cy=completed-todo-item]').should('not.exist');
   });
 });
 

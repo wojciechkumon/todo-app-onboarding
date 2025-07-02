@@ -1,8 +1,8 @@
 <template>
   <div>
     <q-item
-      class="custom-border bg-grey-9 q-pa-sm"
-      :class="{ 'completed-todo': todo.completed }"
+      class="custom-border q-pa-sm"
+      :class="[todo.completed ? 'bg-grey-10 slightly-transparent' : 'bg-grey-9']"
       style="height: 100%"
     >
       <template v-if="!isEditing">
@@ -129,9 +129,8 @@ function cancelEdit() {
   color: $red;
 }
 
-.completed-todo {
+.slightly-transparent {
   opacity: 0.7;
-  background: $grey-10 !important;
 }
 
 .rounded-checkbox ::v-deep(.q-checkbox__bg) {

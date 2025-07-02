@@ -122,7 +122,7 @@ describe('completed todo feature', () => {
 
     cy.get('[data-cy=todo-checkbox]').should('have.attr', 'aria-checked', 'true');
     cy.contains('completed').should('be.visible');
-    cy.get('.q-item').should('have.class', 'completed-todo');
+    cy.get('.q-item').should('have.class', 'slightly-transparent');
   });
 
   it('emits toggle-complete event when checkbox is clicked', () => {
