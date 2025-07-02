@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="row items-center justify-evenly q-pt-xl">
-      <NewTodoForm @add-todo="addTodo" class="col-12 col-lg-4" />
+      <NewTodoForm @add-todo="addTodo" :is-fetching="isCreatingNewTodo" class="col-12 col-lg-4" />
     </div>
     <TodoList
       :todos="todos"
@@ -13,15 +13,44 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 import type { Todo } from 'components/models';
 import NewTodoForm from 'components/NewTodoForm.vue';
 import TodoList from 'components/TodoList.vue';
+import { createTodo } from 'src/api/todos';
 
 const todos = ref<Todo[]>([]);
+const isCreatingNewTodo = ref<boolean>(false);
 let todoIdCounter = 0;
+const $q = useQuasar();
 
-function addTodo(newTodo: string): void {
+async function addTodo(newTodo: string): Promise<void> {
+  isCreatingNewTodo.value = true;
+  try {
+    const todoFromServer = await createTodo(newTodo);
+    $q.notify({
+      message: 'HTTP response body: ' + JSON.stringify(todoFromServer),
+      position: 'bottom-right',
+      color: 'green-8',
+      textColor: 'white',
+      timeout: 5_000,
+      actions: [{ label: 'Dismiss', color: 'white' }],
+    });
+    console.log('todoFromServer', todoFromServer);
+  } catch {
+    $q.notify({
+      message: 'Error while creating a todo, please try again later',
+      position: 'bottom-right',
+      color: 'red-10',
+      textColor: 'white',
+      icon: 'warning',
+      timeout: 5_000,
+      actions: [{ label: 'Dismiss', color: 'white' }],
+    });
+  } finally {
+    isCreatingNewTodo.value = false;
+  }
   todos.value.push({
     id: todoIdCounter,
     content: newTodo,

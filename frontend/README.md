@@ -6,7 +6,6 @@ Features: add a todo item, remove it, edit, mark as completed and revert.
 
 ![todo-list-app-screenshot.png](docs/todo-list-app-screenshot.png)
 
-
 ## A Quasar Project development
 
 ### Install the dependencies

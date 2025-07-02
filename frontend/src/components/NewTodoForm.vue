@@ -8,6 +8,7 @@
         color="amber"
         class="q-mt-sm text-black full-width"
         :disabled="!isValidForm()"
+        :loading="isFetching"
       />
     </div>
   </form>
@@ -16,6 +17,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
+defineProps<{ isFetching?: boolean }>();
 const emit = defineEmits<{
   (e: 'add-todo', newTodoValue: string): void;
 }>();

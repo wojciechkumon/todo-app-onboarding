@@ -1,5 +1,14 @@
 describe('Todo List App', () => {
   beforeEach(() => {
+    cy.intercept('POST', '**/todos', {
+      statusCode: 201,
+      body: {
+        id: 1,
+        content: 'Mocked todo',
+        completed: false,
+      },
+    }).as('createTodo');
+
     cy.visit('/');
   });
 
@@ -10,6 +19,7 @@ describe('Todo List App', () => {
   const createTodo = (todoText: string): void => {
     cy.get('textarea[aria-label="New todo item"]').type(todoText);
     cy.contains('button', 'Add').click();
+    cy.wait('@createTodo');
   };
 
   it('should add a todo item', () => {
@@ -100,7 +110,7 @@ describe('Todo List App', () => {
         cy.get('[data-cy=todo-checkbox]').click();
       });
 
-    cy.contains('completed').should('be.visible');
+    cy.get('.q-badge').contains('completed').should('be.visible');
     cy.get('[data-cy=completed-todo-item]').should('be.visible');
 
     // revert completion
@@ -110,7 +120,7 @@ describe('Todo List App', () => {
         cy.get('[data-cy=todo-checkbox]').click();
       });
 
-    cy.contains('completed').should('not.exist');
+    cy.get('.q-badge').should('not.exist');
     cy.get('[data-cy=completed-todo-item]').should('not.exist');
   });
 });

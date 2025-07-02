@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import { CreateTodoRequest, validateCreateTodo } from "./model/CreateTodoRequest";
 import { Todo } from "./model/Todo";
 import { ApiError } from "./model/ApiError";
 
 export const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.post("/todos", (req: Request, res: Response<Todo | ApiError>) => {
