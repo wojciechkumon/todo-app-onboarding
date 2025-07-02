@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "serverless-http": "^3.2.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.0.0"
+    "@serverless/typescript": "^4.17.1",
+    "@types/express": "^4.17.23",
+    "@types/node": "^22.16.0",
+    "typescript": "^5.8.3"
   }
 }
