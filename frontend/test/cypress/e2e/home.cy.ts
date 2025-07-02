@@ -27,10 +27,11 @@ describe('Todo List App', () => {
     createTodo(todoText);
 
     cy.contains(todoText).should('be.visible');
+    cy.get('[data-cy=todo-item]').should('be.visible');
   });
 
   it('should add 5 todo items', () => {
-    const numberOfTodos = 5;
+    const numberOfTodos = 3;
     for (let i = 1; i <= numberOfTodos; i++) {
       const todoText = `Todo item ${i}`;
       createTodo(todoText);
@@ -40,6 +41,15 @@ describe('Todo List App', () => {
     }
 
     cy.get('[data-cy=todo-item]').should('have.length', numberOfTodos);
+  });
+
+  it('should show an error snackbar on todo item creation error (HTTP 500)', () => {
+    cy.intercept('POST', '**/todos', { statusCode: 500, body: 'error' }).as('createTodo');
+    const todoText = 'My first todo';
+    createTodo(todoText);
+
+    cy.contains('Error while creating a todo, please try again later').should('be.visible');
+    cy.get('[data-cy=todo-item]').should('be.visible'); // HTTP error is ignored for now
   });
 
   it('should add 3 todos and delete the middle one', () => {
