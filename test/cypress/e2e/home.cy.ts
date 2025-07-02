@@ -7,11 +7,14 @@ describe('Todo List App', () => {
     cy.title().should('include', 'Todo list');
   });
 
-  it('should add a todo item', () => {
-    const todoText = 'My first todo';
-
+  const createTodo = (todoText: string): void => {
     cy.get('textarea[aria-label="New todo item"]').type(todoText);
     cy.contains('button', 'Add').click();
+  };
+
+  it('should add a todo item', () => {
+    const todoText = 'My first todo';
+    createTodo(todoText);
 
     cy.contains(todoText).should('be.visible');
   });
@@ -20,8 +23,7 @@ describe('Todo List App', () => {
     const numberOfTodos = 5;
     for (let i = 1; i <= numberOfTodos; i++) {
       const todoText = `Todo item ${i}`;
-      cy.get('textarea[aria-label="New todo item"]').type(todoText);
-      cy.contains('button', 'Add').click();
+      createTodo(todoText);
     }
     for (let i = 1; i <= numberOfTodos; i++) {
       cy.contains(`Todo item ${i}`).should('be.visible');
@@ -32,10 +34,7 @@ describe('Todo List App', () => {
 
   it('should add 3 todos and delete the middle one', () => {
     const todos = ['First todo', 'Second todo', 'Third todo'];
-    todos.forEach((todo) => {
-      cy.get('textarea[aria-label="New todo item"]').type(todo);
-      cy.contains('button', 'Add').click();
-    });
+    todos.forEach((todo) => createTodo(todo));
     cy.get('[data-cy=todo-item]').should('have.length', 3);
 
     cy.get('[data-cy=todo-item]')
@@ -53,10 +52,7 @@ describe('Todo List App', () => {
   describe('editing', () => {
     it('should edit the middle todo item', () => {
       const todos = ['First todo', 'Second todo', 'Third todo'];
-      todos.forEach((todo) => {
-        cy.get('textarea[aria-label="New todo item"]').type(todo);
-        cy.contains('button', 'Add').click();
-      });
+      todos.forEach((todo) => createTodo(todo));
       cy.get('[data-cy=todo-item]').should('have.length', 3);
 
       cy.get('[data-cy=todo-item]')
@@ -75,10 +71,7 @@ describe('Todo List App', () => {
 
     it('should cancel editing the middle todo item', () => {
       const todos = ['First todo', 'Second todo', 'Third todo'];
-      todos.forEach((todo) => {
-        cy.get('textarea[aria-label="New todo item"]').type(todo);
-        cy.contains('button', 'Add').click();
-      });
+      todos.forEach((todo) => createTodo(todo));
       cy.get('[data-cy=todo-item]').should('have.length', 3);
 
       cy.get('[data-cy=todo-item]')
@@ -94,6 +87,31 @@ describe('Todo List App', () => {
       cy.contains('new todo text that will be cancelled').should('not.exist');
       cy.contains('Third todo').should('be.visible');
     });
+  });
+
+  it('should complete and revert a todo item', () => {
+    const todoText = 'new item';
+    createTodo(todoText);
+
+    // mark as completed
+    cy.get('[data-cy=todo-item]')
+      .first()
+      .within(() => {
+        cy.get('[data-cy=todo-checkbox]').click();
+      });
+
+    cy.contains('completed').should('be.visible');
+    cy.get('.completed-todo').should('be.visible');
+
+    // revert completion
+    cy.get('[data-cy=completed-todo-item]')
+      .first()
+      .within(() => {
+        cy.get('[data-cy=todo-checkbox]').click();
+      });
+
+    cy.contains('completed').should('not.exist');
+    cy.get('.completed-todo').should('not.exist');
   });
 });
 

@@ -3,21 +3,24 @@ import type { Todo } from 'components/models';
 
 describe('TodoList', () => {
   const todos: Todo[] = [
-    { id: 1, content: 'First todo' },
-    { id: 2, content: 'Second todo' },
-    { id: 3, content: 'Third todo' },
+    { id: 1, content: 'First todo', completed: false },
+    { id: 2, content: 'Second todo', completed: true },
+    { id: 3, content: 'Third todo', completed: false },
   ];
 
-  it('renders todos and header', () => {
+  it('renders active and completed todos', () => {
     cy.mount(TodoList, {
       props: { todos },
     });
 
     cy.contains('Your todos').should('be.visible');
+    cy.contains('Completed todos').should('be.visible');
     todos.forEach((todo) => {
       cy.contains(todo.content).should('be.visible');
     });
-    cy.get('[data-cy=todo-item]').should('have.length', todos.length);
+
+    cy.get('[data-cy=todo-item]').should('have.length', 2);
+    cy.get('[data-cy=completed-todo-item]').should('have.length', 1);
     cy.contains('Add your first todo above').should('not.exist');
   });
 
@@ -28,5 +31,17 @@ describe('TodoList', () => {
 
     cy.contains('Add your first todo above').should('be.visible');
     cy.contains('Your todos').should('not.exist');
+  });
+
+  it('emits toggle-complete event when checkbox is clicked', () => {
+    const onToggleComplete = cy.spy().as('onToggleComplete');
+
+    cy.mount(TodoList, {
+      props: { todos },
+      attrs: { 'onToggle-complete': (id: number) => onToggleComplete(id) },
+    });
+
+    cy.get('[data-cy=todo-checkbox]').first().click();
+    cy.get('@onToggleComplete').should('have.been.called');
   });
 });

@@ -1,22 +1,44 @@
 <template>
   <div>
-    <q-item class="custom-border bg-grey-9 q-pa-sm" style="height: 100%">
+    <q-item
+      class="custom-border bg-grey-9 q-pa-sm"
+      :class="{ 'completed-todo': todo.completed }"
+      style="height: 100%"
+    >
       <template v-if="!isEditing">
-        <q-item-section>
-          {{ todo.content }}
-        </q-item-section>
-        <q-item-section side class="no-padding">
-          <q-btn flat icon="edit" @click="startEdit" data-cy="edit-btn" class="hover-amber" />
-        </q-item-section>
-        <q-item-section side class="no-padding">
-          <q-btn
-            flat
-            icon="delete"
-            data-cy="delete-btn"
-            @click="emit('delete')"
-            class="hover-red"
+        <q-item-section avatar>
+          <q-checkbox
+            v-model="isCompleted"
+            @update:model-value="emit('toggle-complete')"
+            color="green-9"
+            class="rounded-checkbox"
+            data-cy="todo-checkbox"
           />
         </q-item-section>
+        <q-item-section class="col">
+          {{ todo.content }}
+        </q-item-section>
+        <div class="flex items-center">
+          <div class="text-right">
+            <q-badge v-if="todo.completed" color="green-9" class="text-weight-medium"
+              >completed</q-badge
+            >
+            <div class="flex">
+              <q-item-section side class="no-padding">
+                <q-btn flat icon="edit" @click="startEdit" data-cy="edit-btn" class="hover-amber" />
+              </q-item-section>
+              <q-item-section side class="no-padding">
+                <q-btn
+                  flat
+                  icon="delete"
+                  data-cy="delete-btn"
+                  @click="emit('delete')"
+                  class="hover-red"
+                />
+              </q-item-section>
+            </div>
+          </div>
+        </div>
       </template>
       <template v-else>
         <q-item-section>
@@ -62,10 +84,12 @@ const props = defineProps<{ todo: Todo }>();
 const emit = defineEmits<{
   (e: 'delete'): void;
   (e: 'edit', newValue: string): void;
+  (e: 'toggle-complete'): void;
 }>();
 
 const isEditing = ref(false);
 const editedText = ref(props.todo.content);
+const isCompleted = ref(props.todo.completed || false);
 
 function startEdit() {
   editedText.value = props.todo.content;
@@ -103,5 +127,14 @@ function cancelEdit() {
 
 .hover-red:hover {
   color: $red;
+}
+
+.completed-todo {
+  opacity: 0.7;
+  background: $grey-10 !important;
+}
+
+.rounded-checkbox ::v-deep(.q-checkbox__bg) {
+  border-radius: 50% !important;
 }
 </style>

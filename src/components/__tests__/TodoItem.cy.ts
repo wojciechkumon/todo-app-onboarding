@@ -103,3 +103,38 @@ describe('TodoItem', () => {
     });
   });
 });
+
+describe('completed todo feature', () => {
+  it('should render an uncompleted todo', () => {
+    const uncompletedTodo: Todo = { id: 1, content: 'New todo', completed: false };
+
+    cy.mount(TodoItem, { props: { todo: uncompletedTodo } });
+
+    cy.get('[data-cy=todo-checkbox]').should('have.attr', 'aria-checked', 'false');
+    cy.contains('completed').should('not.exist');
+    cy.get('.q-item').should('not.have.class', 'completed-todo');
+  });
+
+  it('should render a completed todo', () => {
+    const completedTodo: Todo = { id: 1, content: 'Finished todo', completed: true };
+
+    cy.mount(TodoItem, { props: { todo: completedTodo } });
+
+    cy.get('[data-cy=todo-checkbox]').should('have.attr', 'aria-checked', 'true');
+    cy.contains('completed').should('be.visible');
+    cy.get('.q-item').should('have.class', 'completed-todo');
+  });
+
+  it('emits toggle-complete event when checkbox is clicked', () => {
+    const onToggleComplete = cy.spy().as('onToggleCompleteSpy');
+    const todo: Todo = { id: 1, content: 'Test todo', completed: false };
+
+    cy.mount(TodoItem, {
+      props: { todo },
+      attrs: { 'onToggle-complete': onToggleComplete },
+    });
+
+    cy.get('[data-cy=todo-checkbox]').click();
+    cy.get('@onToggleCompleteSpy').should('have.been.calledOnce');
+  });
+});
