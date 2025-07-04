@@ -13,16 +13,16 @@ import io.micronaut.http.annotation.Put
 import jakarta.validation.Valid
 
 @Controller("/todos")
-open class TodosController(private val todoService: TodoService) {
+class TodosController(private val todoService: TodoService) {
 
     @Get("/")
     fun listAll(): List<Todo> = todoService.listAll()
 
     @Post("/")
-    open fun createOne(@Valid @Body request: CreateTodoRequest): Todo = todoService.createOne(request)
+    fun createOne(@Valid @Body request: CreateTodoRequest): Todo = todoService.createOne(request)
 
     @Put("/{id}")
-    open fun updateOne(@PathVariable id: String, @Valid @Body request: UpdateTodoRequest): Todo =
+    fun updateOne(@PathVariable id: String, @Valid @Body request: UpdateTodoRequest): Todo =
         todoService.updateOne(id, request)
 
 //    @Delete("/")

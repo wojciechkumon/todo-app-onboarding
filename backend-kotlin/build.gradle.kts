@@ -10,7 +10,7 @@ plugins {
 version = "0.1"
 group = "com.jigcar.todoapp"
 
-val kotlinVersion=project.properties.get("kotlinVersion")
+val kotlinVersion = project.properties.get("kotlinVersion")
 repositories {
     mavenCentral()
 }
@@ -52,6 +52,10 @@ kotlin {
     }
 }
 
+allOpen {
+    // it adds "open" keyword to the class and all methods using this (data-binding purposes like @Valid annotation)
+    annotation("io.micronaut.http.annotation.Controller")
+}
 
 micronaut {
     runtime("lambda_provided")
@@ -61,7 +65,6 @@ micronaut {
         annotations("com.jigcar.todoapp.*")
     }
 }
-
 
 graalvmNative {
     binaries {
