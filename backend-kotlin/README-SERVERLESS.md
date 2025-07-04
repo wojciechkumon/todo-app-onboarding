@@ -57,7 +57,7 @@ This document describes how to deploy the Micronaut Kotlin backend using the Ser
    - `runtime: java21` instead `provided.al2023`
    - `architecture: x86_64` instead of `arm64`
    - `package.artifact: build/libs/todo-app-kotlin-0.1-all.jar` instead of `function.zip`
-   - `functions.api.handler: com.jigcar.todoapp.FunctionRequestHandler` instead of `bootstrap`
+   - `functions.api.handler: com.jigcar.todoapp.AwsRequestHandlerConfig` instead of `bootstrap`
 2. Build the Kotlin application:
    ```bash
    ./gradlew build

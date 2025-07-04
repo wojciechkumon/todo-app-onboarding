@@ -19,7 +19,7 @@ This will build the GraalVM native image inside a docker container and generate 
 
 ## Handler
 
-Handler: com.jigcar.todoapp.FunctionRequestHandler
+Handler: com.jigcar.todoapp.AwsRequestHandlerConfig
 
 [AWS Lambda Handler](https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html)
 
