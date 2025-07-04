@@ -9,18 +9,15 @@ import java.net.MalformedURLException
 class FunctionLambdaRuntime :
     AbstractMicronautLambdaRuntime<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse, APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>() {
 
-    override fun createRequestHandler(vararg args: String?): RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
-        return FunctionRequestHandler()
-    }
+    override fun createRequestHandler(vararg args: String?): RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> =
+        FunctionRequestHandler()
 
     companion object {
         @JvmStatic
-        fun main(vararg args: String) {
-            try {
-                FunctionLambdaRuntime().run(*args)
-            } catch (e: MalformedURLException) {
-                e.printStackTrace()
-            }
+        fun main(vararg args: String) = try {
+            FunctionLambdaRuntime().run(*args)
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
         }
     }
 }
