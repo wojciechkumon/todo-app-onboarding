@@ -5,24 +5,21 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FunctionRequestHandlerTest {
+    private lateinit var handler: FunctionRequestHandler
 
-    companion object {
-        private lateinit var handler: FunctionRequestHandler
+    @BeforeAll
+    fun setupServer() {
+        handler = FunctionRequestHandler()
+    }
 
-        @BeforeAll
-        @JvmStatic
-        fun setupServer() {
-            handler = FunctionRequestHandler()
-        }
-
-        @AfterAll
-        @JvmStatic
-        fun stopServer() {
-            if (::handler.isInitialized) {
-                handler.applicationContext.close()
-            }
+    @AfterAll
+    fun stopServer() {
+        if (::handler.isInitialized) {
+            handler.applicationContext.close()
         }
     }
 
@@ -45,7 +42,7 @@ class FunctionRequestHandlerTest {
     }
 
     @Test
-    fun testStatusEndpoint() {
+    fun `should return 200 status OK from GET status endpoint`() {
         val request = APIGatewayV2HTTPEvent.builder()
             .withRawPath("/status")
             .withRequestContext(
@@ -64,7 +61,7 @@ class FunctionRequestHandlerTest {
     }
 
     @Test
-    fun testTodosEndpoint() {
+    fun `should return empty list from GET todos endpoint`() {
         val request = APIGatewayV2HTTPEvent.builder()
             .withRawPath("/todos")
             .withRequestContext(
