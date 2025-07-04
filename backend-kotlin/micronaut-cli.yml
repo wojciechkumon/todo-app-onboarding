@@ -1,0 +1,6 @@
+applicationType: function
+defaultPackage: com.jigcar.todoapp
+testFramework: junit
+sourceLanguage: kotlin
+buildTool: gradle_kotlin
+features: [app-name, aws-lambda, aws-lambda-custom-runtime, aws-lambda-events-serde, aws-lambda-handler-function, graalvm, gradle, http-client-jdk, http-client-test, junit, kapt, kotlin, logback, micronaut-build, properties, readme, serialization-jackson, shade, x86]
