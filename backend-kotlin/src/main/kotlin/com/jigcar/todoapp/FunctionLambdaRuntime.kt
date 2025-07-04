@@ -1,16 +1,18 @@
 package com.jigcar.todoapp
+
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse
 import io.micronaut.function.aws.runtime.AbstractMicronautLambdaRuntime
 import java.net.MalformedURLException
 
-class FunctionLambdaRuntime : AbstractMicronautLambdaRuntime<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent, APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>()
-{
+class FunctionLambdaRuntime :
+    AbstractMicronautLambdaRuntime<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse, APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>() {
 
-    override fun createRequestHandler(vararg args: String?): RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+    override fun createRequestHandler(vararg args: String?): RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
         return FunctionRequestHandler()
     }
+
     companion object {
         @JvmStatic
         fun main(vararg args: String) {
