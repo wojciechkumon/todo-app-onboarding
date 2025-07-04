@@ -1,0 +1,20 @@
+org: voytekorg
+app: todo-list
+service: todo-app-backend
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: java21
+  region: eu-west-3
+  architecture: x86_64
+  memorySize: 512
+
+package:
+  artifact: build/libs/todo-app-kotlin-0.1-all.jar
+
+functions:
+  api:
+    handler: com.jigcar.todoapp.FunctionRequestHandler
+    events:
+      - httpApi: '*'
