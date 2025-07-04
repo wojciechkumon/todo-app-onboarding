@@ -1,5 +1,5 @@
 # todo-app-backend
-It's a backend side for the todo-app. It's implemented with serverless + AWS Lambdas.
+It's a backend side for the todo-app. It's implemented in node.js (TypeScript) with serverless + AWS Lambdas.
 
 
 ## Usage
