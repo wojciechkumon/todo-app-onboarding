@@ -1,11 +1,8 @@
-package com.jigcar.todoapp.controller
+package com.jigcar.todoapp.integrationtests
 
 import com.jigcar.todoapp.model.Todo
 import com.jigcar.todoapp.model.TodoDbRecord
 import com.jigcar.todoapp.repository.TodoRepository
-import io.micronaut.context.annotation.Bean
-import io.micronaut.context.annotation.Factory
-import io.micronaut.context.annotation.Replaces
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
@@ -13,16 +10,13 @@ import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.reset
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 
 @MicronautTest
-class TodosControllerTest {
+class ListAllTest {
 
     @Inject
     @field:Client("/todos")
@@ -69,12 +63,5 @@ class TodosControllerTest {
         } catch (e: HttpClientResponseException) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.status)
         }
-    }
-
-    @Factory
-    class MockFactory {
-        @Bean
-        @Replaces(TodoRepository::class)
-        fun mockTodoRepository(): TodoRepository = mock<TodoRepository>()
     }
 }

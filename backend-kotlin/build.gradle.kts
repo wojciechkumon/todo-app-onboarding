@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.kapt") version "1.9.25"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.9.25"
     id("io.micronaut.application") version "4.5.4"
-    id("com.gradleup.shadow") version "8.3.7"
-    id("org.graalvm.buildtools.native") version "0.10.4"
+    id("com.gradleup.shadow") version "8.3.8"
+    id("org.graalvm.buildtools.native") version "0.10.6"
 }
 
 version = "0.1"
@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     kapt("io.micronaut.serde:micronaut-serde-processor")
+    kapt("io.micronaut.validation:micronaut-validation-processor")
     implementation("com.amazonaws:aws-lambda-java-events")
     implementation("io.micronaut:micronaut-http-client-jdk")
     implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde")
@@ -24,6 +25,7 @@ dependencies {
     implementation("io.micronaut.aws:micronaut-function-aws-custom-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.validation:micronaut-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     implementation("io.micronaut:micronaut-http-server-netty") // it's for the local app development without AWS
