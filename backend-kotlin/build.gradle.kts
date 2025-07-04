@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen") version "1.9.25"
     id("io.micronaut.application") version "4.5.4"
     id("com.gradleup.shadow") version "8.3.7"
+    id("org.graalvm.buildtools.native") version "0.10.4"
 }
 
 version = "0.1"
@@ -54,6 +55,21 @@ micronaut {
 }
 
 
+graalvmNative {
+    binaries {
+        named("main") {
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(21))
+                vendor.set(JvmVendorSpec.matching("Oracle Corporation"))
+            })
+            buildArgs.add("--no-fallback")
+            buildArgs.add("--enable-http")
+            buildArgs.add("--enable-https")
+            buildArgs.add("-H:TargetPlatform=linux-aarch64")
+        }
+    }
+}
+
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "21"
     args(
@@ -62,5 +78,3 @@ tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative"
         "-Dio.netty.noPreferDirect=true"
     )
 }
-
-
