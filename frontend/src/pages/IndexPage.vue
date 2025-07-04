@@ -1,7 +1,11 @@
 <template>
   <q-page>
     <div class="row items-center justify-evenly q-pt-xl">
-      <NewTodoForm @add-todo="addTodo" :is-fetching="isCreatingNewTodo" class="col-12 col-lg-4" />
+      <NewTodoForm
+        @add-todo="addTodo"
+        :is-fetching="isCreatingNewTodo || isFetchingAllTodos"
+        class="col-12 col-lg-4"
+      />
     </div>
     <TodoList
       :todos="todos"
@@ -13,67 +17,91 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
-import { ref } from 'vue';
-import type { Todo } from 'components/models';
+import { onMounted, ref } from 'vue';
 import NewTodoForm from 'components/NewTodoForm.vue';
 import TodoList from 'components/TodoList.vue';
-import { createTodo } from 'src/api/todos';
+import type { TodoViewModel } from 'components/models';
+import { TodosApi } from 'src/api/todos';
+import { showErrorSnackbar } from 'components/snackbars';
 
-const todos = ref<Todo[]>([]);
+const todos = ref<TodoViewModel[]>([]);
+const isFetchingAllTodos = ref<boolean>(false);
 const isCreatingNewTodo = ref<boolean>(false);
-let todoIdCounter = 0;
-const $q = useQuasar();
+
+onMounted(async () => {
+  isFetchingAllTodos.value = true;
+  try {
+    const fetchedTodos = await TodosApi.fetchAll();
+    fetchedTodos.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+    todos.value = fetchedTodos;
+  } catch {
+    showErrorSnackbar('Error while fetching all todos, please try again later');
+  } finally {
+    isFetchingAllTodos.value = false;
+  }
+});
 
 async function addTodo(newTodo: string): Promise<void> {
   isCreatingNewTodo.value = true;
   try {
-    const todoFromServer = await createTodo(newTodo);
-    $q.notify({
-      message: 'HTTP response body: ' + JSON.stringify(todoFromServer),
-      position: 'bottom-right',
-      color: 'green-8',
-      textColor: 'white',
-      timeout: 5_000,
-      actions: [{ label: 'Dismiss', color: 'white' }],
-    });
-    console.log('todoFromServer', todoFromServer);
+    const todoFromServer = await TodosApi.create(newTodo);
+    todos.value.push(todoFromServer);
   } catch {
-    $q.notify({
-      message: 'Error while creating a todo, please try again later',
-      position: 'bottom-right',
-      color: 'red-10',
-      textColor: 'white',
-      icon: 'warning',
-      timeout: 5_000,
-      actions: [{ label: 'Dismiss', color: 'white' }],
-    });
+    showErrorSnackbar('Error while creating a todo, please try again later');
   } finally {
     isCreatingNewTodo.value = false;
   }
-  todos.value.push({
-    id: todoIdCounter,
-    content: newTodo,
-    completed: false,
-  });
-  todoIdCounter += 1;
 }
 
-function deleteTodo(id: number): void {
-  todos.value = todos.value.filter((todo) => todo.id !== id);
-}
-
-function editTodo(id: number, newContent: string) {
-  const todo = todos.value.find((t) => t.id === id);
-  if (todo) {
-    todo.content = newContent;
+async function deleteTodo(id: string): Promise<void> {
+  const todoToDelete = todos.value.find((t) => t.id === id);
+  if (!todoToDelete) {
+    return;
+  }
+  todoToDelete.isDuringUpdate = true;
+  try {
+    await TodosApi.deleteOne(id);
+    todos.value = todos.value.filter((todo) => todo.id !== id);
+  } catch {
+    showErrorSnackbar('Error while deleting a todo, please try again later');
+  } finally {
+    todoToDelete.isDuringUpdate = false;
   }
 }
 
-function toggleTodoComplete(id: number) {
-  const todo = todos.value.find((t) => t.id === id);
-  if (todo) {
-    todo.completed = !todo.completed;
+async function editTodo(id: string, newContent: string) {
+  const todoToEdit = todos.value.find((t) => t.id === id);
+  if (!todoToEdit) {
+    return;
+  }
+  todoToEdit.isDuringUpdate = true;
+  const oldContent = todoToEdit.content;
+  try {
+    todoToEdit.content = newContent;
+    await TodosApi.updateOne(id, { content: newContent, completed: todoToEdit.completed });
+  } catch {
+    showErrorSnackbar('Error while updating a todo, please try again later');
+    todoToEdit.content = oldContent;
+  } finally {
+    todoToEdit.isDuringUpdate = false;
+  }
+}
+
+async function toggleTodoComplete(id: string) {
+  const todoToEdit = todos.value.find((t) => t.id === id);
+  if (!todoToEdit) {
+    return;
+  }
+  todoToEdit.isDuringUpdate = true;
+  const newCompletedValue = !todoToEdit.completed;
+  try {
+    todoToEdit.completed = newCompletedValue;
+    await TodosApi.updateOne(id, { content: todoToEdit.content, completed: newCompletedValue });
+  } catch {
+    showErrorSnackbar('Error while updating a todo, please try again later');
+    todoToEdit.completed = !newCompletedValue;
+  } finally {
+    todoToEdit.isDuringUpdate = false;
   }
 }
 </script>

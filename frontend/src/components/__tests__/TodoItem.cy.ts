@@ -1,8 +1,8 @@
 import TodoItem from '../TodoItem.vue';
-import type { Todo } from 'components/models';
+import { createTodo } from 'src/api/todos.fixtures';
 
 describe('TodoItem', () => {
-  const todo: Todo = { id: 1, content: 'Test todo item' };
+  const todo = createTodo({ id: '1', content: 'Test todo item' });
 
   it('renders todo content and buttons', () => {
     cy.mount(TodoItem, { props: { todo } });
@@ -10,6 +10,26 @@ describe('TodoItem', () => {
     cy.contains('Test todo item').should('be.visible');
     cy.get('[data-cy=edit-btn]').should('exist');
     cy.get('[data-cy=delete-btn]').should('exist');
+  });
+
+  it.only('renders non-clickable loaders if isDuringUpdate provided', () => {
+    const onDelete = cy.spy().as('onDeleteSpy');
+    const onToggleComplete = cy.spy().as('onToggleCompleteSpy');
+
+    cy.mount(TodoItem, {
+      props: { todo: { ...todo, isDuringUpdate: true } },
+      attrs: { onDelete, onToggleComplete },
+    });
+
+    // check that buttons don't work
+    cy.get('[data-cy=delete-btn]').click();
+    cy.get('@onDeleteSpy').should('not.have.been.called');
+
+    cy.get('[data-cy=todo-checkbox]').click();
+    cy.get('@onToggleCompleteSpy').should('not.have.been.called');
+
+    cy.get('[data-cy=edit-btn]').click();
+    cy.get('[data-cy=edit-input]').should('not.exist');
   });
 
   it('emits delete event when delete button is clicked', () => {
@@ -106,7 +126,7 @@ describe('TodoItem', () => {
 
 describe('completed todo feature', () => {
   it('should render an uncompleted todo', () => {
-    const uncompletedTodo: Todo = { id: 1, content: 'New todo', completed: false };
+    const uncompletedTodo = createTodo({ id: '1', content: 'New todo', completed: false });
 
     cy.mount(TodoItem, { props: { todo: uncompletedTodo } });
 
@@ -116,7 +136,7 @@ describe('completed todo feature', () => {
   });
 
   it('should render a completed todo', () => {
-    const completedTodo: Todo = { id: 1, content: 'Finished todo', completed: true };
+    const completedTodo = createTodo({ id: '1', content: 'Finished todo', completed: true });
 
     cy.mount(TodoItem, { props: { todo: completedTodo } });
 
@@ -127,7 +147,7 @@ describe('completed todo feature', () => {
 
   it('emits toggle-complete event when checkbox is clicked', () => {
     const onToggleComplete = cy.spy().as('onToggleCompleteSpy');
-    const todo: Todo = { id: 1, content: 'Test todo', completed: false };
+    const todo = createTodo({ id: '1', content: 'Test todo' });
 
     cy.mount(TodoItem, {
       props: { todo },

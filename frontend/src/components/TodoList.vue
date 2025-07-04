@@ -43,14 +43,14 @@
 
 <script setup lang="ts">
 import TodoItem from './TodoItem.vue';
-import type { Todo } from 'components/models';
+import type { TodoViewModel } from 'components/models';
 import { computed } from 'vue';
 
-const props = defineProps<{ todos: Todo[] }>();
+const props = defineProps<{ todos: TodoViewModel[] }>();
 const emit = defineEmits<{
-  (e: 'delete', id: number): void;
-  (e: 'edit', id: number, newContent: string): void;
-  (e: 'toggle-complete', id: number): void;
+  (e: 'delete', id: string): void;
+  (e: 'edit', id: string, newContent: string): void;
+  (e: 'toggle-complete', id: string): void;
 }>();
 
 const activeTodos = computed(() => props.todos.filter((todo) => !todo.completed));

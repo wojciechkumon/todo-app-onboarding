@@ -1,5 +1,5 @@
-export interface Todo {
-  id: number;
-  content: string;
-  completed?: boolean;
+import type { Todo } from 'src/api/todos';
+
+export interface TodoViewModel extends Todo {
+  isDuringUpdate?: boolean;
 }

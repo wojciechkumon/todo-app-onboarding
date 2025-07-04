@@ -1,11 +1,12 @@
 import TodoList from '../TodoList.vue';
-import type { Todo } from 'components/models';
+import type { Todo } from 'src/api/todos';
+import { createTodo } from 'src/api/todos.fixtures';
 
 describe('TodoList', () => {
   const todos: Todo[] = [
-    { id: 1, content: 'First todo', completed: false },
-    { id: 2, content: 'Second todo', completed: true },
-    { id: 3, content: 'Third todo', completed: false },
+    createTodo({ id: '1', content: 'First todo' }),
+    createTodo({ id: '2', content: 'Second todo', completed: true }),
+    createTodo({ id: '3', content: 'Third todo' }),
   ];
 
   it('renders active and completed todos', () => {
@@ -38,7 +39,7 @@ describe('TodoList', () => {
 
     cy.mount(TodoList, {
       props: { todos },
-      attrs: { 'onToggle-complete': (id: number) => onToggleComplete(id) },
+      attrs: { 'onToggle-complete': (id: string) => onToggleComplete(id) },
     });
 
     cy.get('[data-cy=todo-checkbox]').first().click();

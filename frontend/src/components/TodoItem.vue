@@ -13,6 +13,7 @@
             color="green-9"
             class="rounded-checkbox"
             data-cy="todo-checkbox"
+            :disable="todo.isDuringUpdate"
           />
         </q-item-section>
         <q-item-section class="col">
@@ -21,11 +22,18 @@
         <div class="flex items-center">
           <div class="text-right">
             <q-badge v-if="todo.completed" color="green-9" class="text-weight-medium"
-              >completed</q-badge
-            >
+              >completed
+            </q-badge>
             <div class="flex">
               <q-item-section side class="no-padding">
-                <q-btn flat icon="edit" @click="startEdit" data-cy="edit-btn" class="hover-amber" />
+                <q-btn
+                  flat
+                  icon="edit"
+                  @click="startEdit"
+                  data-cy="edit-btn"
+                  class="hover-amber"
+                  :loading="todo.isDuringUpdate"
+                />
               </q-item-section>
               <q-item-section side class="no-padding">
                 <q-btn
@@ -34,6 +42,7 @@
                   data-cy="delete-btn"
                   @click="emit('delete')"
                   class="hover-red"
+                  :loading="todo.isDuringUpdate"
                 />
               </q-item-section>
             </div>
@@ -77,9 +86,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Todo } from 'components/models';
+import type { TodoViewModel } from 'components/models';
 
-const props = defineProps<{ todo: Todo }>();
+const props = defineProps<{ todo: TodoViewModel }>();
 
 const emit = defineEmits<{
   (e: 'delete'): void;

@@ -1,14 +1,9 @@
+import { Todo } from 'src/api/todos';
+
 describe('Todo List App', () => {
   beforeEach(() => {
-    cy.intercept('POST', '**/todos', {
-      statusCode: 201,
-      body: {
-        id: 1,
-        content: 'Mocked todo',
-        completed: false,
-      },
-    }).as('createTodo');
-
+    cy.intercept('GET', '**/todos', { statusCode: 200, body: [] }).as('listTodos');
+    cy.intercept('DELETE', '**/todos/*', { statusCode: 204 }).as('deleteTodo');
     cy.visit('/');
   });
 
@@ -16,11 +11,35 @@ describe('Todo List App', () => {
     cy.title().should('include', 'Todo list');
   });
 
-  const createTodo = (todoText: string): void => {
+  const createTodo = (
+    todoText: string,
+    { skipNetworkMock }: { skipNetworkMock?: boolean } = {},
+  ): Todo => {
+    const todo: Todo = {
+      id: todoText,
+      content: todoText,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+    if (!skipNetworkMock) {
+      cy.intercept('POST', '**/todos', { statusCode: 201, body: todo }).as('createTodo');
+    }
     cy.get('textarea[aria-label="New todo item"]').type(todoText);
     cy.contains('button', 'Add').click();
     cy.wait('@createTodo');
+    return todo;
   };
+
+  it('should list todos from the endpoint on load', () => {
+    cy.intercept('GET', '**/todos', {
+      statusCode: 200,
+      body: [createTodo('first todo'), createTodo('second todo')],
+    }).as('listTodos');
+
+    cy.contains('first todo').should('be.visible');
+    cy.contains('second todo').should('be.visible');
+    cy.get('[data-cy=todo-item]').should('be.visible');
+  });
 
   it('should add a todo item', () => {
     const todoText = 'My first todo';
@@ -46,10 +65,10 @@ describe('Todo List App', () => {
   it('should show an error snackbar on todo item creation error (HTTP 500)', () => {
     cy.intercept('POST', '**/todos', { statusCode: 500, body: 'error' }).as('createTodo');
     const todoText = 'My first todo';
-    createTodo(todoText);
+    createTodo(todoText, { skipNetworkMock: true });
 
     cy.contains('Error while creating a todo, please try again later').should('be.visible');
-    cy.get('[data-cy=todo-item]').should('be.visible'); // HTTP error is ignored for now
+    cy.get('[data-cy=todo-item]').should('not.exist');
   });
 
   it('should add 3 todos and delete the middle one', () => {
@@ -71,15 +90,26 @@ describe('Todo List App', () => {
 
   describe('editing', () => {
     it('should edit the middle todo item', () => {
-      const todos = ['First todo', 'Second todo', 'Third todo'];
-      todos.forEach((todo) => createTodo(todo));
+      const todosText = ['First todo', 'Second todo', 'Third todo'];
+      const todos = todosText.map((todo) => createTodo(todo));
       cy.get('[data-cy=todo-item]').should('have.length', 3);
 
+      const newContent = 'todo edited!';
+
+      cy.intercept('PUT', '**/todos/*', {
+        statusCode: 200,
+        body: {
+          id: todos[1]!.id,
+          content: newContent,
+          completed: todos[1]!.completed,
+          createdAt: todos[1]!.createdAt,
+        } satisfies Todo,
+      }).as('updateTodo');
       cy.get('[data-cy=todo-item]')
         .eq(1)
         .within(() => {
           cy.get('[data-cy=edit-btn]').click();
-          cy.get('[data-cy=edit-input]').clear().type('todo edited!');
+          cy.get('[data-cy=edit-input]').clear().type(newContent);
           cy.get('[data-cy=edit-save-btn]').click();
         });
 
@@ -111,9 +141,18 @@ describe('Todo List App', () => {
 
   it('should complete and revert a todo item', () => {
     const todoText = 'new item';
-    createTodo(todoText);
+    const todo = createTodo(todoText);
 
     // mark as completed
+    cy.intercept('PUT', '**/todos/*', {
+      statusCode: 200,
+      body: {
+        id: todo.id,
+        content: todo.content,
+        completed: true,
+        createdAt: todo.createdAt,
+      } satisfies Todo,
+    }).as('updateTodo');
     cy.get('[data-cy=todo-item]')
       .first()
       .within(() => {
@@ -124,6 +163,15 @@ describe('Todo List App', () => {
     cy.get('[data-cy=completed-todo-item]').should('be.visible');
 
     // revert completion
+    cy.intercept('PUT', '**/todos/*', {
+      statusCode: 200,
+      body: {
+        id: todo.id,
+        content: todo.content,
+        completed: false,
+        createdAt: todo.createdAt,
+      } satisfies Todo,
+    }).as('updateTodo');
     cy.get('[data-cy=completed-todo-item]')
       .first()
       .within(() => {
