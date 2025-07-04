@@ -8,6 +8,7 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest
 
@@ -53,6 +54,15 @@ class TodoRepository {
             completed = attributes["completed"]?.bool() ?: false,
             createdAt = attributes["createdAt"]?.s() ?: ""
         )
+    }
+
+    fun deleteById(id: String) {
+        val deleteRequest = DeleteItemRequest.builder()
+            .tableName("Todos")
+            .key(mapOf("id" to AttributeValue.builder().s(id).build()))
+            .build()
+
+        dynamoDbClient.deleteItem(deleteRequest)
     }
 
     fun listAll(): List<TodoDbRecord> = table.scan().items().toList()

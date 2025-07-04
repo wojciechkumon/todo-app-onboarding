@@ -44,7 +44,7 @@ class CreateTodoTest {
             Todo::class.java
         )
 
-        assertEquals(HttpStatus.OK, response.status)
+        assertEquals(HttpStatus.CREATED, response.status)
         val todo = response.body.get()
         assertNotNull(todo.id)
         assertEquals("Test todo content", todo.content)

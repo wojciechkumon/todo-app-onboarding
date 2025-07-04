@@ -41,6 +41,8 @@ class TodoService(private val todoRepository: TodoRepository) {
             throw HttpStatusException(HttpStatus.NOT_FOUND, "Todo with id $id not found")
         }
 
+    fun deleteOne(id: String) = todoRepository.deleteById(id)
+
     private fun mapToTodo(todoDbRecord: TodoDbRecord): Todo =
         Todo(
             id = todoDbRecord.id,
