@@ -1,0 +1,6 @@
+micronaut:
+  application:
+    name: kotlin-step-functionr
+  server:
+    cors:
+      enabled: true

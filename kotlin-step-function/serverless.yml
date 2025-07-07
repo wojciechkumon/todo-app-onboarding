@@ -1,0 +1,20 @@
+org: voytekorg
+app: todo-list
+service: todo-app-backend
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: provided.al2023
+  region: eu-west-3
+  architecture: arm64
+  memorySize: 512
+
+package:
+  artifact: build/libs/kotlin-step-function-0.1-lambda.zip
+
+functions:
+  api:
+    handler: bootstrap
+    events:
+      - httpApi: '*'
