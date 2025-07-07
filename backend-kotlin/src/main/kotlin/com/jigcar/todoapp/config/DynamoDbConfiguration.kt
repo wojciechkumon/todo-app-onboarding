@@ -1,12 +1,12 @@
 package com.jigcar.todoapp.config
 
 import com.jigcar.todoapp.model.TodoDbRecord
+import com.jigcar.todoapp.model.todoTableSchema
 import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
 import jakarta.inject.Singleton
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
@@ -32,6 +32,6 @@ class DynamoDbConfiguration {
     fun todoTable(enhancedClient: DynamoDbEnhancedClient): DynamoDbTable<TodoDbRecord> =
         enhancedClient.table(
             "Todos",
-            TableSchema.fromBean(TodoDbRecord::class.java)
+            todoTableSchema
         )
 }
