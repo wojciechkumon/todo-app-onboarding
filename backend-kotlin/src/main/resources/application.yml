@@ -1,0 +1,6 @@
+micronaut:
+  application:
+    name: todo-app-kotlin
+  server:
+    cors:
+      enabled: true
