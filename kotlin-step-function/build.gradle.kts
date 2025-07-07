@@ -39,8 +39,15 @@ dependencies {
 
 application {
     mainClass = "com.jigcar.stepfunction.AwsLambdaApp"
-//    mainClass = "com.jigcar.stepfunction.LocalApp"
 }
+
+tasks.register<JavaExec>("runLocal") {
+    group = "application"
+    description = "Run LocalApp main class for local development"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass = "com.jigcar.stepfunction.LocalApp"
+}
+
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
 }

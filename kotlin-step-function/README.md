@@ -40,12 +40,11 @@ serverless.
 
 ## Local development
 
-Change locally in `build.gradle.kts` the `mainClass` to `"com.jigcar.stepfunction.LocalApp"` and run:
-
+### Option 1: Run with Gradle CLI
 ```shell
-./gradlew run
+./gradlew runLocal
 ```
 
-Or just go with Intellij to `LocalApp` and click "play" button on the main function.
-
-This approach will use the second entrypoint, skipping the AWS Lambda config and using a local server.
+### Option 2: Run/debug with IntelliJ
+Just go with Intellij to `LocalApp` file and click "play" button on the main function.
+It's a simple way to have a debugger.
