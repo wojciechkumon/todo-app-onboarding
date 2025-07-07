@@ -1,10 +1,10 @@
 # kotlin-step-function
 
 It's a simple backend to test Kotlin + serverless capabilities with AWS Step Functions.
-It has be easy develop locally and to deploy in a convenient way.
+It has to be easy to develop locally and to deploy in a convenient way.
 It can compile both to:
-- the native GraalVM (long build, short cold start)
-- JAR with JVM runtime (fast build, long cold start)
+- the native GraalVM executable (longer build, faster cold start)
+- JAR with JVM runtime (faster build, slower cold start)
 
 ## Prerequisites
 
@@ -20,23 +20,19 @@ serverless.
 
 #### One command build + deployment
 
+Build a zipped native executable (using Docker) and deploy with `--param runtimeType=native` (change or remove `--aws-profile` if needed):
 ```bash
 ./gradlew buildNativeLambda && \
-  serverless deploy --aws-profile dev # use any profile you need or just remove it
+  serverless deploy --param runtimeType=native --aws-profile dev
 ```
 
 ## Option 2: Standard JAR Deployment (JVM runtime)
 
-1. For **standard JAR deployment** you need to change in `serverless.yml`:
-    - `runtime: java21` instead `provided.al2023`
-    - `architecture: x86_64` instead of `arm64`
-    - `package.artifact: build/libs/kotlin-step-function-0.1-all.jar` instead of `build/libs/kotlin-step-function-0.1-lambda.zip`
-    - `functions.api.handler: com.jigcar.stepfunction.AwsRequestHandlerConfig` instead of `bootstrap`
-2. Build the Kotlin application and deploy (change or remove aws-profile if needed):
-   ```bash
-   ./gradlew build && \
-     serverless deploy --aws-profile dev
-   ```
+Build a Kotlin application JAR and deploy with `--param runtimeType=jvm` (change or remove `--aws-profile` if needed):
+```bash
+./gradlew build && \
+  serverless deploy --param runtimeType=jvm --aws-profile dev
+```
 
 ## Local development
 

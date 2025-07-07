@@ -5,16 +5,33 @@ frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: provided.al2023
   region: eu-west-3
-  architecture: arm64
   memorySize: 512
+  runtime: ${self:custom.runtime.${param:runtimeType}}
+  architecture: ${self:custom.architecture.${param:runtimeType}}
 
 package:
-  artifact: build/libs/kotlin-step-function-0.1-lambda.zip
+  artifact: ${self:custom.packageArtifact.${param:runtimeType}}
 
 functions:
   api:
-    handler: bootstrap
+    handler: ${self:custom.handler.${param:runtimeType}}
     events:
       - httpApi: '*'
+
+custom:
+  runtime:
+    native: provided.al2023
+    jvm: java21
+
+  architecture:
+    native: arm64
+    jvm: x86_64
+
+  packageArtifact:
+    native: build/libs/kotlin-step-function-0.1-lambda.zip
+    jvm: build/libs/kotlin-step-function-0.1-all.jar
+
+  handler:
+    native: bootstrap
+    jvm: com.jigcar.stepfunction.AwsRequestHandlerConfig
