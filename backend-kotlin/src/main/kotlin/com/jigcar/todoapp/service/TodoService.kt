@@ -8,7 +8,6 @@ import com.jigcar.todoapp.repository.TodoRepository
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.exceptions.HttpStatusException
 import jakarta.inject.Singleton
-import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 import java.time.Instant
 import java.util.UUID
 
@@ -28,18 +27,16 @@ class TodoService(private val todoRepository: TodoRepository) {
         return mapToTodo(todoDbRecord)
     }
 
-    fun updateOne(id: String, request: UpdateTodoRequest): Todo =
-        try {
-            val updatedTodoDbRecord = todoRepository.updateById(
-                id = id,
-                content = request.content!!,
-                completed = request.completed!!
-            )
-            mapToTodo(updatedTodoDbRecord)
-        } catch (_: ConditionalCheckFailedException) {
-            // DynamoDB throws ConditionalCheckFailedException when an item doesn't exist
-            throw HttpStatusException(HttpStatus.NOT_FOUND, "Todo with id $id not found")
-        }
+    fun updateOne(id: String, request: UpdateTodoRequest): Todo {
+        val updatedTodoDbRecord = todoRepository.updateById(
+            id = id,
+            content = request.content!!,
+            completed = request.completed!!
+        )
+        return updatedTodoDbRecord
+            ?.let { mapToTodo(it) }
+            ?: throw HttpStatusException(HttpStatus.NOT_FOUND, "Todo with id $id not found")
+    }
 
     fun deleteOne(id: String) = todoRepository.deleteById(id)
 

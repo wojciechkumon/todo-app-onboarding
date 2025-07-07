@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 
 @MicronautTest
 class UpdateTodoTest {
@@ -63,7 +62,7 @@ class UpdateTodoTest {
     @Test
     fun `PUT todos returns 404 for non-existent todo`() {
         whenever(mockTodoRepository.updateById("non-existent-id", "Updated content", true))
-            .thenThrow(ConditionalCheckFailedException.builder().message("Item does not exist").build())
+            .thenReturn(null)
         val request = UpdateTodoRequest("Updated content", true)
 
         try {
