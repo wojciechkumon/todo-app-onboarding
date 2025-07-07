@@ -21,7 +21,7 @@ provider:
         - Fn::GetAtt: [TodosTable, Arn]
 
 package:
-  artifact: function.zip
+  artifact: build/libs/todo-app-kotlin-0.1-lambda.zip
 
 functions:
   api:
