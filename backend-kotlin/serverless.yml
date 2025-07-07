@@ -1,0 +1,44 @@
+org: voytekorg
+app: todo-list
+service: todo-app-backend
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: provided.al2023
+  region: eu-west-3
+  architecture: arm64
+  memorySize: 512
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:Scan
+      Resource:
+        - Fn::GetAtt: [TodosTable, Arn]
+
+package:
+  artifact: build/libs/todo-app-kotlin-0.1-lambda.zip
+
+functions:
+  api:
+    handler: bootstrap
+    events:
+      - httpApi: '*'
+
+resources:
+  Resources:
+    TodosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Todos
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
