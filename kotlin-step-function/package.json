@@ -1,0 +1,11 @@
+{
+  "name": "kotlin-step-function",
+  "version": "1.0.0",
+  "description": "It's a simple backend to test Kotlin + serverless capabilities with AWS Step Functions.",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^4.17.1",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "serverless-step-functions": "^3.23.2"
+  }
+}

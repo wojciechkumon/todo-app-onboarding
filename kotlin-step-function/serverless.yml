@@ -10,6 +10,10 @@ provider:
   runtime: ${self:custom.runtime.${param:runtimeType}}
   architecture: ${self:custom.architecture.${param:runtimeType}}
 
+plugins:
+  - serverless-step-functions
+  - serverless-iam-roles-per-function
+
 package:
   artifact: ${self:custom.packageArtifact.${param:runtimeType}}
 
@@ -18,6 +22,17 @@ functions:
     handler: ${self:custom.handler.${param:runtimeType}}
     events:
       - httpApi: '*'
+    environment:
+      LONG_PROCESSING_STEP_FN_ARN: !GetAtt [ LongProcessingWorkflow, Arn ]
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - states:StartExecution
+        Resource:
+          - Fn::GetAtt: [ LongProcessingWorkflow, Arn ]
+
+  longProcessing:
+    handler: com.jigcar.stepfunction.controller.LongProcessingStepFunctionHandler
 
 custom:
   runtime:
@@ -35,3 +50,22 @@ custom:
   handler:
     native: bootstrap
     jvm: com.jigcar.stepfunction.AwsRequestHandlerConfig
+
+stepFunctions:
+  stateMachines:
+    longProcessingWorkflow:
+      name: longProcessingWorkflow
+      definition:
+        Comment: "Long processing in parts"
+        StartAt: FirstPart
+        States:
+          FirstPart:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ LongProcessingLambdaFunction, Arn ]
+            Next: SecondPart
+          SecondPart:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ LongProcessingLambdaFunction, Arn ]
+            End: true
