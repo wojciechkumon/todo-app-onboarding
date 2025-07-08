@@ -3,16 +3,33 @@ app: todo-list
 service: todo-app-backend
 frameworkVersion: '4'
 
+custom:
+  runtime:
+    native: provided.al2023
+    jvm: java21
+
+  architecture:
+    native: arm64
+    jvm: x86_64
+
+  packageArtifact:
+    native: build/libs/kotlin-step-function-0.1-lambda.zip
+    jvm: build/libs/kotlin-step-function-0.1-all.jar
+
+  handler:
+    native: bootstrap
+    jvm: com.jigcar.stepfunction.AwsRequestHandlerConfig
+
+plugins:
+  - serverless-step-functions
+  - serverless-iam-roles-per-function
+
 provider:
   name: aws
   region: eu-west-3
   memorySize: 512
   runtime: ${self:custom.runtime.${param:runtimeType}}
   architecture: ${self:custom.architecture.${param:runtimeType}}
-
-plugins:
-  - serverless-step-functions
-  - serverless-iam-roles-per-function
 
 package:
   artifact: ${self:custom.packageArtifact.${param:runtimeType}}
@@ -37,23 +54,6 @@ functions:
   longProcessing:
     handler: com.jigcar.stepfunction.controller.LongProcessingStepFunctionHandler
     timeout: 900
-
-custom:
-  runtime:
-    native: provided.al2023
-    jvm: java21
-
-  architecture:
-    native: arm64
-    jvm: x86_64
-
-  packageArtifact:
-    native: build/libs/kotlin-step-function-0.1-lambda.zip
-    jvm: build/libs/kotlin-step-function-0.1-all.jar
-
-  handler:
-    native: bootstrap
-    jvm: com.jigcar.stepfunction.AwsRequestHandlerConfig
 
 stepFunctions:
   stateMachines:
