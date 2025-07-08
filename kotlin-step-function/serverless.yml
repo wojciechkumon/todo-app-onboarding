@@ -1,0 +1,75 @@
+org: voytekorg
+app: todo-list
+service: todo-app-backend
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  region: eu-west-3
+  memorySize: 512
+  runtime: ${self:custom.runtime.${param:runtimeType}}
+  architecture: ${self:custom.architecture.${param:runtimeType}}
+
+plugins:
+  - serverless-step-functions
+  - serverless-iam-roles-per-function
+
+package:
+  artifact: ${self:custom.packageArtifact.${param:runtimeType}}
+
+functions:
+  api:
+    handler: ${self:custom.handler.${param:runtimeType}}
+    events:
+      - httpApi: '*'
+    environment:
+      LONG_PROCESSING_STEP_FN_ARN: !GetAtt [ LongProcessingWorkflow, Arn ]
+      LONG_PROCESSING_EXECUTION_ARN_PREFIX: "arn:aws:states:${aws:region}:${aws:accountId}:execution:longProcessingWorkflow:"
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - states:StartExecution
+          - states:DescribeExecution
+        Resource:
+          - arn:aws:states:${aws:region}:${aws:accountId}:stateMachine:longProcessingWorkflow
+          - arn:aws:states:${aws:region}:${aws:accountId}:execution:longProcessingWorkflow:*
+
+  longProcessing:
+    handler: com.jigcar.stepfunction.controller.LongProcessingStepFunctionHandler
+    timeout: 900
+
+custom:
+  runtime:
+    native: provided.al2023
+    jvm: java21
+
+  architecture:
+    native: arm64
+    jvm: x86_64
+
+  packageArtifact:
+    native: build/libs/kotlin-step-function-0.1-lambda.zip
+    jvm: build/libs/kotlin-step-function-0.1-all.jar
+
+  handler:
+    native: bootstrap
+    jvm: com.jigcar.stepfunction.AwsRequestHandlerConfig
+
+stepFunctions:
+  stateMachines:
+    longProcessingWorkflow:
+      name: longProcessingWorkflow
+      definition:
+        Comment: "Long processing in parts"
+        StartAt: FirstPart
+        States:
+          FirstPart:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ LongProcessingLambdaFunction, Arn ]
+            Next: SecondPart
+          SecondPart:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ LongProcessingLambdaFunction, Arn ]
+            End: true
