@@ -1,28 +1,14 @@
 package com.jigcar.stepfunction.controller
 
 import com.jigcar.stepfunction.model.StepFunctionParams
+import com.jigcar.stepfunction.service.LongProcessingService
 import io.micronaut.function.aws.MicronautRequestHandler
-import java.util.concurrent.TimeUnit
-import org.slf4j.LoggerFactory
+import jakarta.inject.Inject
 
-class LongProcessingStepFunctionHandler : MicronautRequestHandler<StepFunctionParams, StepFunctionParams>() {
+class LongProcessingStepFunctionHandler() : MicronautRequestHandler<StepFunctionParams, StepFunctionParams>() {
 
-    override fun execute(input: StepFunctionParams): StepFunctionParams {
-        logger.info("Starting long processing step function, taskId=${input.taskId}, iteration=${input.iteration}")
-        val steps = 5
-        for (i in 1..steps) {
-            TimeUnit.SECONDS.sleep(5)
-            logger.info("Long processing step function is running, taskId=${input.taskId}, iteration=${input.iteration}, progress=${i}/${steps}")
-        }
+    @Inject
+    private lateinit var longProcessingService: LongProcessingService
 
-        val baseResult = if (input.result != null) "${input.result} " else ""
-        val newResult = baseResult + "[iteration${input.iteration} done]"
-
-        logger.info("Iteration finished, taskId=${input.taskId}, iteration=${input.iteration}, newResult=${newResult}")
-        return StepFunctionParams(taskId = input.taskId, iteration = input.iteration + 1, result = newResult)
-    }
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(LongProcessingStepFunctionHandler::class.java)
-    }
+    override fun execute(input: StepFunctionParams): StepFunctionParams = longProcessingService.process(input)
 }

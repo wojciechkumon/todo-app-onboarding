@@ -3,36 +3,27 @@ package com.jigcar.stepfunction.controller
 import com.jigcar.stepfunction.model.ApiError
 import com.jigcar.stepfunction.model.TaskStatusData
 import com.jigcar.stepfunction.service.StepFunctionExecutionService
-import io.micronaut.context.annotation.Bean
-import io.micronaut.context.annotation.Factory
-import io.micronaut.context.annotation.Replaces
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
-import jakarta.inject.Inject
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 
 @MicronautTest
-class AsyncProcessingControllerTest {
-
-    @Inject
-    @field:Client("/async-tasks/")
-    lateinit var client: HttpClient
-
-    @Inject
-    lateinit var mockExecutionService: StepFunctionExecutionService
-
+class AsyncProcessingControllerTest(
+    private val mockExecutionService: StepFunctionExecutionService,
+    @Client("/async-tasks/")
+    private val client: HttpClient
+) {
     @BeforeEach
     fun setUp() {
         reset(mockExecutionService)
@@ -84,12 +75,5 @@ class AsyncProcessingControllerTest {
         val responseBody = exception.response.getBody(ApiError::class.java).orElse(null)
         assertNotNull(responseBody)
         assertEquals("Provided ID doesn't match UUID schema", responseBody.message)
-    }
-
-    @Factory
-    class TestConfiguration {
-        @Bean
-        @Replaces(StepFunctionExecutionService::class)
-        fun mockTodoRepository(): StepFunctionExecutionService = mock<StepFunctionExecutionService>()
     }
 }
