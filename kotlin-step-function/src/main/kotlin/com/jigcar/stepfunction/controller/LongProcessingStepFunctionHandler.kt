@@ -8,16 +8,17 @@ import org.slf4j.LoggerFactory
 class LongProcessingStepFunctionHandler : MicronautRequestHandler<StepFunctionParams, StepFunctionParams>() {
 
     override fun execute(input: StepFunctionParams): StepFunctionParams {
-        logger.info("Received input: {}", input)
         logger.info("Starting long processing step function, taskId=${input.taskId}, iteration=${input.iteration}")
-        for (i in 1..5) {
+        val steps = 5
+        for (i in 1..steps) {
             TimeUnit.SECONDS.sleep(5)
-            logger.info("Long processing step function is running, taskId=${input.taskId}, iteration=${input.iteration}, progress=${i}/${5}")
+            logger.info("Long processing step function is running, taskId=${input.taskId}, iteration=${input.iteration}, progress=${i}/${steps}")
         }
 
         val baseResult = if (input.result != null) "${input.result} " else ""
         val newResult = baseResult + "[iteration${input.iteration} done]"
 
+        logger.info("Iteration finished, taskId=${input.taskId}, iteration=${input.iteration}, newResult=${newResult}")
         return StepFunctionParams(taskId = input.taskId, iteration = input.iteration + 1, result = newResult)
     }
 

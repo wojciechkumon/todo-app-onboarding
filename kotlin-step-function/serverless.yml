@@ -24,15 +24,19 @@ functions:
       - httpApi: '*'
     environment:
       LONG_PROCESSING_STEP_FN_ARN: !GetAtt [ LongProcessingWorkflow, Arn ]
+      LONG_PROCESSING_EXECUTION_ARN_PREFIX: "arn:aws:states:${aws:region}:${aws:accountId}:execution:longProcessingWorkflow:"
     iamRoleStatements:
       - Effect: Allow
         Action:
           - states:StartExecution
+          - states:DescribeExecution
         Resource:
-          - Fn::GetAtt: [ LongProcessingWorkflow, Arn ]
+          - arn:aws:states:${aws:region}:${aws:accountId}:stateMachine:longProcessingWorkflow
+          - arn:aws:states:${aws:region}:${aws:accountId}:execution:longProcessingWorkflow:*
 
   longProcessing:
     handler: com.jigcar.stepfunction.controller.LongProcessingStepFunctionHandler
+    timeout: 900
 
 custom:
   runtime:
